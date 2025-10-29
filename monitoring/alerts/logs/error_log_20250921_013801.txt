@@ -1,0 +1,7 @@
+[2025-09-21 01:38:07] [critical] [build] Debug build failed
+Details: error: unable to override package 'StickyNotes' because its identity 'swarmv6' doesn't match override's identity (directory name) 'stickynotes'
+[0/1] Planning build
+
+[2025-09-21 01:38:13] [critical] [build] Release build failed
+Details: error: unable to override package 'StickyNotes' because its identity 'swarmv6' doesn't match override's identity (directory name) 'stickynotes'
+

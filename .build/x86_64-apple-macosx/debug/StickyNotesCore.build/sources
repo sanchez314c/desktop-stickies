@@ -1,0 +1,10 @@
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Models/Extensions.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Models/Note.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Models/NoteEntity.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Persistence/DataModel.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Persistence/MigrationManager.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Persistence/PersistenceController.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/BackgroundOperationManager.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/BackgroundOperations.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/NoteRepository.swift
+/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/NoteService.swift

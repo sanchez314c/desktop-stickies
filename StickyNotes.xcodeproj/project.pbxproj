@@ -1,0 +1,2 @@
+// Add Core Data model to project
+// This would be added to the Xcode project file

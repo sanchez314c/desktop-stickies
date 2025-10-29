@@ -1,0 +1,17 @@
+{
+  "": {
+    "swift-dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/master.swiftdeps"
+  },
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/Tests/StickyNotesIntegrationTests/PersistenceControllerIntegrationTests.swift": {
+    "dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/PersistenceControllerIntegrationTests.d",
+    "object": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/PersistenceControllerIntegrationTests.swift.o",
+    "swiftmodule": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/PersistenceControllerIntegrationTests~partial.swiftmodule",
+    "swift-dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/PersistenceControllerIntegrationTests.swiftdeps"
+  },
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/Tests/StickyNotesIntegrationTests/StickyNotesIntegrationTests.swift": {
+    "dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/StickyNotesIntegrationTests.d",
+    "object": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/StickyNotesIntegrationTests.swift.o",
+    "swiftmodule": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/StickyNotesIntegrationTests~partial.swiftmodule",
+    "swift-dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/x86_64-apple-macosx/debug/StickyNotesIntegrationTests.build/StickyNotesIntegrationTests.swiftdeps"
+  }
+}

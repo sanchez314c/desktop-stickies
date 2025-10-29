@@ -1,0 +1,15 @@
+version: "Apple Swift version 6.0.3 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)"
+options: "b1ac52fd938ff3e5802963371a9aafc9e49ac7af7cab448970d654372e52550c"
+build_start_time: [1758433047, 958274000]
+build_end_time: [1758433056, 12000]
+inputs:
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Models/Extensions.swift": [1758432101, 370944233]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Models/Note.swift": [1758432141, 571738654]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Models/NoteEntity.swift": [1758431963, 114271755]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Persistence/DataModel.swift": [1758432011, 487630525]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Persistence/MigrationManager.swift": [1758432199, 154272067]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Persistence/PersistenceController.swift": [1758432658, 158476292]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/BackgroundOperationManager.swift": [1758432531, 908456544]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/BackgroundOperations.swift": [1758432501, 930948305]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/NoteRepository.swift": [1758432195, 277319234]
+  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Sources/Services/NoteService.swift": [1758432589, 33387315]

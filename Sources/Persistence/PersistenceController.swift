@@ -1,0 +1,343 @@
+//
+//  PersistenceController.swift
+//  StickyNotes
+//
+//  Created on 2025-01-21.
+//
+
+import Foundation
+import CoreData
+import CloudKit
+import Combine
+
+/// Main persistence controller managing Core Data stack with CloudKit integration
+public final class PersistenceController {
+    public static let shared = PersistenceController()
+
+    // MARK: - Core Data Stack
+
+    #if TEST
+    public let container: NSPersistentContainer
+    #else
+    public let container: NSPersistentCloudKitContainer
+    #endif
+    public let viewContext: NSManagedObjectContext
+
+    private var backgroundContext: NSManagedObjectContext?
+
+    // MARK: - CloudKit
+
+    private let cloudKitContainer: CKContainer
+    private let privateDatabase: CKDatabase
+
+    // MARK: - Publishers
+
+    public let syncStatusPublisher = PassthroughSubject<SyncStatus, Never>()
+    public let errorPublisher = PassthroughSubject<PersistenceError, Never>()
+
+    // MARK: - Initialization
+
+    internal init(inMemory: Bool = false) {
+        // Initialize CloudKit container
+        cloudKitContainer = CKContainer(identifier: "iCloud.com.stickynotes.app")
+        privateDatabase = cloudKitContainer.privateCloudDatabase
+
+        // Initialize Core Data container
+        let model = DataModel.loadModel()
+        #if TEST
+        container = NSPersistentContainer(name: "TestModel", managedObjectModel: model)
+        #else
+        container = NSPersistentCloudKitContainer(name: "StickyNotes", managedObjectModel: model)
+        #endif
+
+        // Get view context
+        viewContext = container.viewContext
+
+        // Configure container
+        #if !TEST
+        configureContainer()
+        #endif
+
+        if inMemory {
+            // Override the container to use in-memory store for testing
+            let description = NSPersistentStoreDescription()
+            description.type = NSInMemoryStoreType
+            description.url = URL(fileURLWithPath: "/dev/null")
+            container.persistentStoreDescriptions = [description]
+        }
+        viewContext.automaticallyMergesChangesFromParent = true
+        viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        // Setup CloudKit sync
+        #if !TEST
+        setupCloudKitSync()
+        #endif
+
+        // Load persistent stores
+        loadPersistentStores()
+    }
+
+    private func configureContainer() {
+        // Configure CloudKit options
+        guard let description = container.persistentStoreDescriptions.first else {
+            fatalError("No persistent store descriptions found")
+        }
+
+        // Enable CloudKit sync
+        description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
+            containerIdentifier: "iCloud.com.stickynotes.app"
+        )
+
+        // Configure store options
+        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+    }
+
+    private func setupCloudKitSync() {
+        // Observe CloudKit sync notifications
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleRemoteChange(_:)),
+            name: .NSPersistentStoreRemoteChange,
+            object: container.persistentStoreCoordinator
+        )
+
+        // Observe CloudKit account status
+        CKContainer.default().accountStatus { [weak self] status, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self?.errorPublisher.send(.cloudKitError(error))
+                    return
+                }
+
+                switch status {
+                case .available:
+                    self?.syncStatusPublisher.send(.available)
+                case .noAccount:
+                    self?.syncStatusPublisher.send(.noAccount)
+                case .restricted:
+                    self?.syncStatusPublisher.send(.restricted)
+                case .temporarilyUnavailable:
+                    self?.syncStatusPublisher.send(.unknown)
+                case .couldNotDetermine:
+                    self?.syncStatusPublisher.send(.unknown)
+                @unknown default:
+                    self?.syncStatusPublisher.send(.unknown)
+                }
+            }
+        }
+    }
+
+    private func loadPersistentStores() {
+        // Check for migration before loading
+        if let storeURL = container.persistentStoreDescriptions.first?.url {
+            let migrationManager = MigrationManager(storeURL: storeURL, model: container.managedObjectModel)
+            do {
+                try migrationManager.migrateIfNeeded()
+            } catch {
+                print("Migration failed: \(error.localizedDescription)")
+                // Continue with loading - Core Data might handle it
+            }
+        }
+
+        container.loadPersistentStores { [weak self] description, error in
+            if let error = error {
+                // Try to handle common migration errors
+                if let migrationError = error as NSError?,
+                   migrationError.domain == NSCocoaErrorDomain,
+                   migrationError.code == NSPersistentStoreIncompatibleVersionHashError ||
+                   migrationError.code == NSMigrationMissingSourceModelError {
+
+                    print("Migration error detected, attempting recovery: \(error.localizedDescription)")
+
+                    // Attempt to delete and recreate the store
+                    self?.attemptStoreRecovery(for: description, error: error)
+                    return
+                }
+
+                fatalError("Failed to load persistent stores: \(error.localizedDescription)")
+            }
+
+            // Enable automatic merging of changes from CloudKit
+            self?.container.viewContext.automaticallyMergesChangesFromParent = true
+            self?.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+            print("Persistent store loaded: \(description)")
+        }
+    }
+
+    private func attemptStoreRecovery(for description: NSPersistentStoreDescription, error: Error) {
+        guard let storeURL = description.url else {
+            fatalError("Cannot recover store without URL: \(error.localizedDescription)")
+        }
+
+        do {
+            // Delete the problematic store
+            try FileManager.default.removeItem(at: storeURL)
+
+            // Remove associated files
+            let storeDirectory = storeURL.deletingLastPathComponent()
+            let storeName = storeURL.deletingPathExtension().lastPathComponent
+            let filesToRemove = ["\(storeName).sqlite-wal", "\(storeName).sqlite-shm"]
+
+            for file in filesToRemove {
+                let fileURL = storeDirectory.appendingPathComponent(file)
+                try? FileManager.default.removeItem(at: fileURL)
+            }
+
+            print("Store recovery completed, reloading...")
+
+            // Try loading again
+            container.loadPersistentStores { description, error in
+                if let error = error {
+                    fatalError("Store recovery failed: \(error.localizedDescription)")
+                }
+
+                self.container.viewContext.automaticallyMergesChangesFromParent = true
+                self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+                print("Store recovered and loaded: \(description)")
+            }
+
+        } catch {
+            fatalError("Store recovery failed: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Context Management
+
+    /// Get a new background context for operations
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        let context = container.newBackgroundContext()
+        context.automaticallyMergesChangesFromParent = true
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
+    }
+
+    /// Perform operation on background context
+    public func performBackgroundTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
+        container.performBackgroundTask(block)
+    }
+
+    /// Save changes in the specified context
+    public func save(context: NSManagedObjectContext) async throws {
+        guard context.hasChanges else { return }
+
+        try await context.perform {
+            do {
+                try context.save()
+            } catch {
+                context.rollback()
+                throw PersistenceError.saveFailed(error)
+            }
+        }
+    }
+
+    /// Save changes in view context
+    public func saveViewContext() async throws {
+        try await save(context: viewContext)
+    }
+
+    // MARK: - CloudKit Operations
+
+    @objc private func handleRemoteChange(_ notification: Notification) {
+        // Handle remote changes from CloudKit
+        syncStatusPublisher.send(.syncing)
+
+        // Merge changes will happen automatically due to automaticallyMergesChangesFromParent
+        // We can add additional sync logic here if needed
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.syncStatusPublisher.send(.synced)
+        }
+    }
+
+    /// Manually trigger CloudKit sync
+    public func triggerSync() {
+        syncStatusPublisher.send(.syncing)
+
+        // Force sync by saving context
+        Task {
+            do {
+                try await saveViewContext()
+                syncStatusPublisher.send(.synced)
+            } catch {
+                errorPublisher.send(.syncFailed(error))
+                syncStatusPublisher.send(.error)
+            }
+        }
+    }
+
+    /// Check if iCloud is available
+    public func isCloudKitAvailable() async -> Bool {
+        do {
+            let status = try await cloudKitContainer.accountStatus()
+            return status == .available
+        } catch {
+            errorPublisher.send(.cloudKitError(error))
+            return false
+        }
+    }
+
+    // MARK: - Migration Support
+
+    /// Handle schema migrations
+    public func migrateIfNeeded() async throws {
+        // Check if migration is needed
+        let coordinator = container.persistentStoreCoordinator
+        guard let store = coordinator.persistentStores.first else { return }
+
+        let metadata = try coordinator.metadata(for: store)
+        let model = container.managedObjectModel
+
+        if !model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata) {
+            // Migration needed - this would be handled by Core Data automatically
+            // but we can add custom migration logic here if needed
+            print("Migration may be needed")
+        }
+    }
+
+    // MARK: - Cleanup
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+}
+
+// MARK: - Supporting Types
+
+public enum SyncStatus {
+    case available
+    case noAccount
+    case restricted
+    case unknown
+    case syncing
+    case synced
+    case error
+}
+
+public enum PersistenceError: LocalizedError {
+    case saveFailed(Error)
+    case fetchFailed(Error)
+    case deleteFailed(Error)
+    case cloudKitError(Error)
+    case syncFailed(Error)
+    case invalidData
+
+    public var errorDescription: String? {
+        switch self {
+        case .saveFailed(let error):
+            return "Failed to save data: \(error.localizedDescription)"
+        case .fetchFailed(let error):
+            return "Failed to fetch data: \(error.localizedDescription)"
+        case .deleteFailed(let error):
+            return "Failed to delete data: \(error.localizedDescription)"
+        case .cloudKitError(let error):
+            return "CloudKit error: \(error.localizedDescription)"
+        case .syncFailed(let error):
+            return "Sync failed: \(error.localizedDescription)"
+        case .invalidData:
+            return "Invalid data encountered"
+        }
+    }
+}
