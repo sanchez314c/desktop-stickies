@@ -1,4 +1,0 @@
-module StickyNotesCore {
-    header "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/StickyNotes/.build/arm64-apple-macosx/release/StickyNotesCore.build/StickyNotesCore-Swift.h"
-    requires objc
-}

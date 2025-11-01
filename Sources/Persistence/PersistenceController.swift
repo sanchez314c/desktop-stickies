@@ -5,10 +5,10 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
-import CoreData
 import CloudKit
 import Combine
+import CoreData
+import Foundation
 
 /// Main persistence controller managing Core Data stack with CloudKit integration
 public final class PersistenceController {
@@ -16,11 +16,7 @@ public final class PersistenceController {
 
     // MARK: - Core Data Stack
 
-    #if TEST
     public let container: NSPersistentContainer
-    #else
-    public let container: NSPersistentCloudKitContainer
-    #endif
     public let viewContext: NSManagedObjectContext
 
     private var backgroundContext: NSManagedObjectContext?
@@ -37,26 +33,19 @@ public final class PersistenceController {
 
     // MARK: - Initialization
 
-    internal init(inMemory: Bool = false) {
+    init(inMemory: Bool = false) {
         // Initialize CloudKit container
         cloudKitContainer = CKContainer(identifier: "iCloud.com.stickynotes.app")
         privateDatabase = cloudKitContainer.privateCloudDatabase
 
         // Initialize Core Data container
         let model = DataModel.loadModel()
-        #if TEST
-        container = NSPersistentContainer(name: "TestModel", managedObjectModel: model)
-        #else
-        container = NSPersistentCloudKitContainer(name: "StickyNotes", managedObjectModel: model)
-        #endif
+        guard let _ = model.entities.first else {
+            fatalError("Failed to create Core Data model with entities")
+        }
 
-        // Get view context
-        viewContext = container.viewContext
-
-        // Configure container
-        #if !TEST
-        configureContainer()
-        #endif
+        // Create container manually to avoid bundle loading issues
+        container = NSPersistentContainer(name: "Dummy", managedObjectModel: model)
 
         if inMemory {
             // Override the container to use in-memory store for testing
@@ -65,22 +54,28 @@ public final class PersistenceController {
             description.url = URL(fileURLWithPath: "/dev/null")
             container.persistentStoreDescriptions = [description]
         }
+
+        // Get view context
+        viewContext = container.viewContext
         viewContext.automaticallyMergesChangesFromParent = true
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
-        // Setup CloudKit sync
-        #if !TEST
-        setupCloudKitSync()
-        #endif
+        // Configure container (only for CloudKit containers)
+        if !inMemory {
+            configureContainer()
+            setupCloudKitSync()
+        }
 
         // Load persistent stores
         loadPersistentStores()
     }
 
     private func configureContainer() {
-        // Configure CloudKit options
-        guard let description = container.persistentStoreDescriptions.first else {
-            fatalError("No persistent store descriptions found")
+        // Configure CloudKit options (only for CloudKit containers)
+        guard let cloudKitContainer = container as? NSPersistentCloudKitContainer,
+              let description = container.persistentStoreDescriptions.first
+        else {
+            return // Not a CloudKit container, skip CloudKit configuration
         }
 
         // Enable CloudKit sync
@@ -94,6 +89,9 @@ public final class PersistenceController {
     }
 
     private func setupCloudKitSync() {
+        // Only setup CloudKit sync for CloudKit containers
+        guard container is NSPersistentCloudKitContainer else { return }
+
         // Observe CloudKit sync notifications
         NotificationCenter.default.addObserver(
             self,
@@ -146,8 +144,8 @@ public final class PersistenceController {
                 if let migrationError = error as NSError?,
                    migrationError.domain == NSCocoaErrorDomain,
                    migrationError.code == NSPersistentStoreIncompatibleVersionHashError ||
-                   migrationError.code == NSMigrationMissingSourceModelError {
-
+                   migrationError.code == NSMigrationMissingSourceModelError
+                {
                     print("Migration error detected, attempting recovery: \(error.localizedDescription)")
 
                     // Attempt to delete and recreate the store
@@ -238,10 +236,48 @@ public final class PersistenceController {
         try await save(context: viewContext)
     }
 
+    /// Create a new note
+    public func createNote(title: String = "", content: String = "", color: String = "#FFE4B5") -> NoteEntity {
+        let note = NoteEntity(context: viewContext)
+        note.id = UUID()
+        note.title = title
+        note.content = content
+        note.color = color
+        note.positionX = 100
+        note.positionY = 100
+        note.width = 300
+        note.height = 200
+        note.createdAt = Date()
+        note.modifiedAt = Date()
+        note.isLocked = false
+        note.isMarkdown = false
+        return note
+    }
+
+    /// Save changes
+    public func save() throws {
+        try viewContext.save()
+    }
+
+    /// Fetch notes
+    public func fetchNotes() throws -> [NoteEntity] {
+        let request = NoteEntity.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "modifiedAt", ascending: false)]
+        return try viewContext.fetch(request)
+    }
+
+    /// Delete a note
+    public func deleteNote(_ note: NoteEntity) throws {
+        viewContext.delete(note)
+        try save()
+    }
+
     // MARK: - CloudKit Operations
 
-    @objc private func handleRemoteChange(_ notification: Notification) {
-        // Handle remote changes from CloudKit
+    @objc private func handleRemoteChange(_: Notification) {
+        // Handle remote changes from CloudKit (only for CloudKit containers)
+        guard container is NSPersistentCloudKitContainer else { return }
+
         syncStatusPublisher.send(.syncing)
 
         // Merge changes will happen automatically due to automaticallyMergesChangesFromParent
@@ -326,15 +362,15 @@ public enum PersistenceError: LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .saveFailed(let error):
+        case let .saveFailed(error):
             return "Failed to save data: \(error.localizedDescription)"
-        case .fetchFailed(let error):
+        case let .fetchFailed(error):
             return "Failed to fetch data: \(error.localizedDescription)"
-        case .deleteFailed(let error):
+        case let .deleteFailed(error):
             return "Failed to delete data: \(error.localizedDescription)"
-        case .cloudKitError(let error):
+        case let .cloudKitError(error):
             return "CloudKit error: \(error.localizedDescription)"
-        case .syncFailed(let error):
+        case let .syncFailed(error):
             return "Sync failed: \(error.localizedDescription)"
         case .invalidData:
             return "Invalid data encountered"

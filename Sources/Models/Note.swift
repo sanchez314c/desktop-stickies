@@ -5,9 +5,9 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
 import CoreData
 import CoreGraphics
+import Foundation
 
 /// Represents a sticky note with all its properties
 public struct Note: Identifiable, Codable, Hashable {
@@ -99,7 +99,8 @@ extension Note {
               let colorRaw = entity.color,
               let color = NoteColor(rawValue: colorRaw),
               let createdAt = entity.createdAt,
-              let modifiedAt = entity.modifiedAt else {
+              let modifiedAt = entity.modifiedAt
+        else {
             return nil
         }
 
@@ -107,13 +108,13 @@ extension Note {
         self.title = title
         self.content = content
         self.color = color
-        self.position = CGPoint(x: entity.positionX, y: entity.positionY)
-        self.size = CGSize(width: entity.width, height: entity.height)
+        position = CGPoint(x: entity.positionX, y: entity.positionY)
+        size = CGSize(width: entity.width, height: entity.height)
         self.createdAt = createdAt
         self.modifiedAt = modifiedAt
-        self.isMarkdown = entity.isMarkdown
-        self.isLocked = entity.isLocked
-        self.tags = (entity.tags as? [String]) ?? []
+        isMarkdown = entity.isMarkdown
+        isLocked = entity.isLocked
+        tags = (entity.tags as? [String]) ?? []
     }
 
     func toEntity(in context: NSManagedObjectContext) -> NoteEntity {

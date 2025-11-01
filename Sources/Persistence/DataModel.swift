@@ -5,19 +5,19 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 /// Utility class for setting up the Core Data model
-public final class DataModel {
+public enum DataModel {
     /// Create and return the managed object model
     public static func makeManagedObjectModel() -> NSManagedObjectModel {
         let model = NSManagedObjectModel()
 
         // Create Note entity
         let noteEntity = NSEntityDescription()
-        noteEntity.name = "NoteEntity"
-        noteEntity.managedObjectClassName = NSStringFromClass(NoteEntity.self)
+        noteEntity.name = "Note"
+        noteEntity.managedObjectClassName = "Note"
 
         // Create attributes
         let idAttribute = NSAttributeDescription()
@@ -72,16 +72,27 @@ public final class DataModel {
         createdAtAttribute.attributeType = .dateAttributeType
         createdAtAttribute.isOptional = false
 
-        let modifiedAtAttribute = NSAttributeDescription()
-        modifiedAtAttribute.name = "modifiedAt"
-        modifiedAtAttribute.attributeType = .dateAttributeType
-        modifiedAtAttribute.isOptional = false
+        let updatedAtAttribute = NSAttributeDescription()
+        updatedAtAttribute.name = "updatedAt"
+        updatedAtAttribute.attributeType = .dateAttributeType
+        updatedAtAttribute.isOptional = false
 
         let isMarkdownAttribute = NSAttributeDescription()
         isMarkdownAttribute.name = "isMarkdown"
         isMarkdownAttribute.attributeType = .booleanAttributeType
         isMarkdownAttribute.isOptional = false
         isMarkdownAttribute.defaultValue = false
+
+        let isPinnedAttribute = NSAttributeDescription()
+        isPinnedAttribute.name = "isPinned"
+        isPinnedAttribute.attributeType = .booleanAttributeType
+        isPinnedAttribute.isOptional = false
+        isPinnedAttribute.defaultValue = false
+
+        let categoryAttribute = NSAttributeDescription()
+        categoryAttribute.name = "category"
+        categoryAttribute.attributeType = .stringAttributeType
+        categoryAttribute.isOptional = true
 
         let isLockedAttribute = NSAttributeDescription()
         isLockedAttribute.name = "isLocked"
@@ -106,10 +117,12 @@ public final class DataModel {
             widthAttribute,
             heightAttribute,
             createdAtAttribute,
-            modifiedAtAttribute,
+            updatedAtAttribute,
+            isPinnedAttribute,
+            categoryAttribute,
             isMarkdownAttribute,
             isLockedAttribute,
-            tagsAttribute
+            tagsAttribute,
         ]
 
         // Set entity to model
@@ -120,13 +133,14 @@ public final class DataModel {
 
     /// Load the model from a compiled .momd file if available, otherwise create programmatically
     public static func loadModel() -> NSManagedObjectModel {
-        // Try to load from bundle first (for when using .xcdatamodeld files)
+        // Try to load from bundle first (for production)
         if let modelURL = Bundle.main.url(forResource: "StickyNotes", withExtension: "momd"),
-           let model = NSManagedObjectModel(contentsOf: modelURL) {
+           let model = NSManagedObjectModel(contentsOf: modelURL)
+        {
             return model
         }
 
-        // Fallback to programmatic model creation
+        // Fallback to programmatic model creation (for testing)
         return makeManagedObjectModel()
     }
 }

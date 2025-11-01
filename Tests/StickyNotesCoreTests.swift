@@ -5,8 +5,8 @@
 //  Created on 2025-01-21.
 //
 
-import XCTest
 @testable import StickyNotesCore
+import XCTest
 
 final class StickyNotesCoreTests: XCTestCase {
     var persistenceController: PersistenceController!
@@ -178,7 +178,7 @@ final class StickyNotesCoreTests: XCTestCase {
         // Given
         let notes = [
             Note(title: "Note 1", content: "Content 1", color: .yellow),
-            Note(title: "Note 2", content: "Content 2", color: .blue)
+            Note(title: "Note 2", content: "Content 2", color: .blue),
         ]
 
         let encoder = JSONEncoder()
@@ -211,4 +211,3 @@ final class StickyNotesCoreTests: XCTestCase {
 }
 
 // MARK: - Test Extensions
-

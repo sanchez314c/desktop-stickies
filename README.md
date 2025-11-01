@@ -1,8 +1,21 @@
-# StickyNotes Core Data Persistence Layer
+<p align="center">
+  <img src="https://img.shields.io/badge/macOS-13%2B-blue" alt="macOS 13+">
+  <img src="https://img.shields.io/badge/Swift-5.10%2B-orange" alt="Swift 5.10+">
+  <img src="https://img.shields.io/badge/Xcode-15.0%2B-green" alt="Xcode 15.0+">
+  <img src="https://img.shields.io/badge/License-MIT-purple" alt="MIT License">
+  <img src="https://img.shields.io/badge/CloudKit-Enabled-FF9500" alt="CloudKit Enabled">
+  <img src="https://img.shields.io/badge/Multi--Architecture-007ACC" alt="Universal Binary">
+</p>
 
-A robust, CloudKit-integrated Core Data persistence layer for the macOS StickyNotes application.
+# StickyNotes Desktop Application
 
-## Features
+A modern, feature-rich macOS desktop sticky notes application with robust CloudKit synchronization, Core Data persistence, and universal binary support for both Intel and Apple Silicon Macs.
+
+**Author:** Jasonn Michaels
+**Repository:** [github.com/sanchez314c/desktop-stickies](https://github.com/sanchez314c/desktop-stickies)
+**Contact:** [sanchez314c@jasonpaulmichaels.co](mailto:sanchez314c@jasonpaulmichaels.co)
+
+## ✨ Features
 
 - **Core Data Integration**: Full Core Data stack with CloudKit synchronization
 - **CloudKit Sync**: Automatic iCloud synchronization across devices
@@ -299,13 +312,85 @@ For comprehensive documentation, see the [docs/](docs/) directory:
 2. Import the module: `import StickyNotesCore`
 3. Initialize the persistence layer in your AppDelegate
 
-## Contributing
+## 🚀 Quick Start
 
-1. Follow the established architecture patterns
-2. Add comprehensive tests for new features
-3. Update documentation for API changes
-4. Ensure CloudKit compatibility
+### Prerequisites
+- macOS 13.0 or later
+- Xcode 15.0 or later
+- Swift 5.10 or later
 
-## License
+### Installation
 
-This persistence layer is part of the StickyNotes application.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/sanchez314c/desktop-stickies.git
+   cd desktop-stickies
+   ```
+
+2. **Build using Swift Package Manager**
+   ```bash
+   make build
+   # Or run directly from source
+   make run
+   ```
+
+3. **Or use Xcode**
+   ```bash
+   open StickyNotes.xcodeproj
+   ```
+   - Select your target device (Mac)
+   - Press `Cmd + R` to build and run
+
+### Swift Package Manager Integration
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/sanchez314c/desktop-stickies.git", from: "1.0.0")
+]
+```
+
+## 📸 Screenshots
+
+*(Coming soon - Screenshots of the application in action)*
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+**Quick contribution steps:**
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+- Follow established architecture patterns
+- Add comprehensive tests for new features
+- Update documentation for API changes
+- Ensure CloudKit compatibility
+- Follow Swift style conventions
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Apple for Core Data and CloudKit frameworks
+- The Swift community for inspiration and tools
+- Contributors who help improve this project
+
+## 📞 Support
+
+- 🐛 [Report a Bug](https://github.com/sanchez314c/desktop-stickies/issues/new?assignees=&labels=bug&template=bug_report.md)
+- 💡 [Request a Feature](https://github.com/sanchez314c/desktop-stickies/issues/new?assignees=&labels=enhancement&template=feature_request.md)
+- 📖 [Documentation](docs/)
+- 📧 **Email:** [sanchez314c@jasonpaulmichaels.co](mailto:sanchez314c@jasonpaulmichaels.co)
+- 🔗 **GitHub:** [github.com/sanchez314c/desktop-stickies](https://github.com/sanchez314c/desktop-stickies)
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ by Jasonn Michaels for the macOS community</sub>
+</p>

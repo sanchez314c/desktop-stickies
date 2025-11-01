@@ -5,9 +5,9 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
 import Combine
 import CoreGraphics
+import Foundation
 
 /// Service providing high-level note operations with business logic
 public final class NoteService {
@@ -24,7 +24,7 @@ public final class NoteService {
 
     public init(repository: NoteRepository = CoreDataNoteRepository()) {
         self.repository = repository
-        self.persistenceController = .shared
+        persistenceController = .shared
 
         setupSyncObservers()
     }
@@ -330,19 +330,19 @@ public enum ServiceError: LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .createFailed(let error):
+        case let .createFailed(error):
             return "Failed to create note: \(error.localizedDescription)"
-        case .fetchFailed(let error):
+        case let .fetchFailed(error):
             return "Failed to fetch notes: \(error.localizedDescription)"
-        case .updateFailed(let error):
+        case let .updateFailed(error):
             return "Failed to update note: \(error.localizedDescription)"
-        case .deleteFailed(let error):
+        case let .deleteFailed(error):
             return "Failed to delete note: \(error.localizedDescription)"
-        case .searchFailed(let error):
+        case let .searchFailed(error):
             return "Failed to search notes: \(error.localizedDescription)"
         case .syncError:
             return "Synchronization failed"
-        case .persistenceError(let error):
+        case let .persistenceError(error):
             return "Persistence error: \(error.localizedDescription)"
         case .noteNotFound:
             return "Note not found"

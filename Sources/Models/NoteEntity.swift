@@ -5,8 +5,8 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 /// Core Data entity for Note persistence
 @objc(NoteEntity)
@@ -26,25 +26,25 @@ public class NoteEntity: NSManagedObject {
     @NSManaged public var tags: NSObject?
 }
 
-extension NoteEntity {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<NoteEntity> {
-        return NSFetchRequest<NoteEntity>(entityName: "NoteEntity")
+public extension NoteEntity {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<NoteEntity> {
+        return NSFetchRequest<NoteEntity>(entityName: "Note")
     }
 
-    @nonobjc public class func fetchRequestSortedByModifiedDate() -> NSFetchRequest<NoteEntity> {
+    @nonobjc class func fetchRequestSortedByModifiedDate() -> NSFetchRequest<NoteEntity> {
         let request = fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "modifiedAt", ascending: false)]
         return request
     }
 
-    @nonobjc public class func fetchRequestForNote(withId id: UUID) -> NSFetchRequest<NoteEntity> {
+    @nonobjc class func fetchRequestForNote(withId id: UUID) -> NSFetchRequest<NoteEntity> {
         let request = fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         request.fetchLimit = 1
         return request
     }
 
-    @nonobjc public class func fetchRequestForNotes(containing searchText: String) -> NSFetchRequest<NoteEntity> {
+    @nonobjc class func fetchRequestForNotes(containing searchText: String) -> NSFetchRequest<NoteEntity> {
         let request = fetchRequest()
         let titlePredicate = NSPredicate(format: "title CONTAINS[cd] %@", searchText)
         let contentPredicate = NSPredicate(format: "content CONTAINS[cd] %@", searchText)
@@ -53,14 +53,14 @@ extension NoteEntity {
         return request
     }
 
-    @nonobjc public class func fetchRequestForNotes(withColor color: String) -> NSFetchRequest<NoteEntity> {
+    @nonobjc class func fetchRequestForNotes(withColor color: String) -> NSFetchRequest<NoteEntity> {
         let request = fetchRequest()
         request.predicate = NSPredicate(format: "color == %@", color)
         request.sortDescriptors = [NSSortDescriptor(key: "modifiedAt", ascending: false)]
         return request
     }
 
-    @nonobjc public class func fetchRequestForNotes(withTags tags: [String]) -> NSFetchRequest<NoteEntity> {
+    @nonobjc class func fetchRequestForNotes(withTags tags: [String]) -> NSFetchRequest<NoteEntity> {
         let request = fetchRequest()
         let predicates = tags.map { NSPredicate(format: "ANY tags == %@", $0) }
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)

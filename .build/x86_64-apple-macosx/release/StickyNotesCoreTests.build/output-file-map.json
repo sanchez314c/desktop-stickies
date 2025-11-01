@@ -1,17 +1,12 @@
 {
   "": {
-    "dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.d",
-    "object": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.o",
-    "swift-dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/master.swiftdeps"
+    "dependencies": "/Volumes/apfsRAID/Development/Github/desktop-stickies/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.d",
+    "object": "/Volumes/apfsRAID/Development/Github/desktop-stickies/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.o",
+    "swift-dependencies": "/Volumes/apfsRAID/Development/Github/desktop-stickies/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/master.swiftdeps"
   },
-  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Tests/StickyNotesCoreTests.swift": {
-    "object": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.swift.o",
-    "swiftmodule": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests~partial.swiftmodule",
-    "swift-dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.swiftdeps"
-  },
-  "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/Tests/StickyNotesIntegrationTests.swift": {
-    "object": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesIntegrationTests.swift.o",
-    "swiftmodule": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesIntegrationTests~partial.swiftmodule",
-    "swift-dependencies": "/Volumes/apfsRAID/Development/Testing/SWARM-TESTS/swarmV6/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesIntegrationTests.swiftdeps"
+  "/Volumes/apfsRAID/Development/Github/desktop-stickies/Tests/StickyNotesCoreTests.swift": {
+    "object": "/Volumes/apfsRAID/Development/Github/desktop-stickies/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.swift.o",
+    "swiftmodule": "/Volumes/apfsRAID/Development/Github/desktop-stickies/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests~partial.swiftmodule",
+    "swift-dependencies": "/Volumes/apfsRAID/Development/Github/desktop-stickies/.build/x86_64-apple-macosx/release/StickyNotesCoreTests.build/StickyNotesCoreTests.swiftdeps"
   }
 }

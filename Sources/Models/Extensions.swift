@@ -5,8 +5,8 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
 import CoreGraphics
+import Foundation
 
 // MARK: - CGPoint Extensions
 
@@ -21,7 +21,8 @@ extension CGPoint {
 
         guard components.count == 2,
               let x = Double(components[0]),
-              let y = Double(components[1]) else {
+              let y = Double(components[1])
+        else {
             return nil
         }
 
@@ -47,7 +48,8 @@ extension CGSize {
 
         guard components.count == 2,
               let width = Double(components[0]),
-              let height = Double(components[1]) else {
+              let height = Double(components[1])
+        else {
             return nil
         }
 
@@ -91,8 +93,8 @@ extension Date {
 extension String {
     /// Truncates the string to the specified length with ellipsis
     func truncated(to length: Int, trailing: String = "...") -> String {
-        guard self.count > length else { return self }
-        return String(self.prefix(length - trailing.count)) + trailing
+        guard count > length else { return self }
+        return String(prefix(length - trailing.count)) + trailing
     }
 
     /// Checks if the string contains only whitespace
@@ -142,7 +144,7 @@ extension Array where Element == Note {
         let lowercasedText = text.lowercased()
         return filter {
             $0.title.lowercased().contains(lowercasedText) ||
-            $0.content.lowercased().contains(lowercasedText)
+                $0.content.lowercased().contains(lowercasedText)
         }
     }
 
@@ -179,7 +181,7 @@ extension Note {
         guard !text.isEmpty else { return true }
         let lowercasedText = text.lowercased()
         return title.lowercased().contains(lowercasedText) ||
-               content.lowercased().contains(lowercasedText)
+            content.lowercased().contains(lowercasedText)
     }
 
     /// Check if note has specific tag
@@ -203,7 +205,7 @@ extension Note {
     /// Is note empty (no title and no content)
     var isEmpty: Bool {
         title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// Character count

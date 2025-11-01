@@ -5,9 +5,9 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
-import CoreData
 import Combine
+import CoreData
+import Foundation
 
 /// Protocol defining the interface for note data operations
 public protocol NoteRepository {
@@ -55,7 +55,7 @@ public final class CoreDataNoteRepository: NoteRepository {
 
     public init(persistenceController: PersistenceController = .shared) {
         self.persistenceController = persistenceController
-        self.viewContext = persistenceController.viewContext
+        viewContext = persistenceController.viewContext
     }
 
     // MARK: - Fetch Operations

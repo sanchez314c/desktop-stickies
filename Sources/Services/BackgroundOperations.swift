@@ -22,7 +22,7 @@ class ImportNotesOperation: Operation, BackgroundOperation {
         self.persistenceController = persistenceController
         self.operationId = operationId
         super.init()
-        self.qualityOfService = .background
+        qualityOfService = .background
     }
 
     override func main() {
@@ -41,7 +41,7 @@ class ImportNotesOperation: Operation, BackgroundOperation {
             var importedCount = 0
 
             let batches = stride(from: 0, to: notes.count, by: batchSize).map {
-                Array(notes[$0..<min($0 + batchSize, notes.count)])
+                Array(notes[$0 ..< min($0 + batchSize, notes.count)])
             }
             for batch in batches {
                 guard !isCancelled else { return }
@@ -88,7 +88,7 @@ class ExportNotesOperation: Operation, BackgroundOperation, ProgressReportingOpe
         self.persistenceController = persistenceController
         self.operationId = operationId
         super.init()
-        self.qualityOfService = .background
+        qualityOfService = .background
     }
 
     override func main() {

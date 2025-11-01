@@ -5,8 +5,8 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 /// Manages Core Data schema migrations
 public final class MigrationManager {
@@ -39,8 +39,8 @@ public final class MigrationManager {
         print("Migration required for store at: \(storeURL)")
 
         // Create a migration manager
-        let migrationManager = NSMigrationManager(
-            sourceModel: try sourceModelForStore(),
+        let migrationManager = try NSMigrationManager(
+            sourceModel: sourceModelForStore(),
             destinationModel: model
         )
 
@@ -50,8 +50,8 @@ public final class MigrationManager {
 
         // Perform migration
         let mappingModel = NSMappingModel(from: [Bundle.main],
-                                         forSourceModel: migrationManager.sourceModel,
-                                         destinationModel: model)
+                                          forSourceModel: migrationManager.sourceModel,
+                                          destinationModel: model)
 
         try migrationManager.migrateStore(
             from: storeURL,
@@ -87,7 +87,8 @@ public final class MigrationManager {
 
         for url in allModelURLs {
             if let model = NSManagedObjectModel(contentsOf: url),
-               model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata) {
+               model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata)
+            {
                 return model
             }
         }
@@ -96,7 +97,7 @@ public final class MigrationManager {
         return try inferredModelFromMetadata(metadata)
     }
 
-    private func inferredModelFromMetadata(_ metadata: [String: Any]) throws -> NSManagedObjectModel {
+    private func inferredModelFromMetadata(_: [String: Any]) throws -> NSManagedObjectModel {
         // This is a simplified version. In a real app, you'd want more sophisticated
         // model inference based on the entity descriptions in the metadata
         let model = NSManagedObjectModel()

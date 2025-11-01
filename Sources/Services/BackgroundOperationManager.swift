@@ -5,8 +5,8 @@
 //  Created on 2025-01-21.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 /// Manages background operations for long-running tasks
 public final class BackgroundOperationManager {
